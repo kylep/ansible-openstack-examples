@@ -1,0 +1,14 @@
+---
+- name: "Debug OpenStack auth variable"
+  debug:
+    var: openstack_auth
+
+- name: "Get server details"
+  os_server_info:
+    auth: "{{openstack_auth}}"
+    verify: no
+  register: servers_facts
+
+- name: "Debug OpenStack server facts"
+  debug:
+    var: servers_facts
