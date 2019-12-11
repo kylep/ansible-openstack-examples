@@ -1,0 +1,28 @@
+---
+
+- name: "Create a private demo flavor"
+  os_nova_flavor:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    name: "{{ demo_flavor }}"
+    ram: 1024
+    vcpus: 1
+    disk: 10
+    is_public: no
+
+- name: "Get project's ID by its name"
+  os_project_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ demo_project }}"
+  register: project_data
+
+- name: "Grant the project access to the demo flavor"
+  os_project_access:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    target_project_id: "{{ project_data['openstack_projects'][0]['id'] }}"
+    resource_name: "{{ demo_flavor }}"
+    resource_type: nova_flavor

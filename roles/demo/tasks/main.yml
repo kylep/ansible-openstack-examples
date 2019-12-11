@@ -1,0 +1,10 @@
+---
+
+- debug:
+    msg: "Starting the Ansible OpenStack Demo!"
+
+- include: user-setup.yml
+- include: image.yml
+- include: flavor.yml
+- include: network.yml
+- include: server.yml

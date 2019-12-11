@@ -1,0 +1,52 @@
+---
+
+# The 'arcus*' properties are used with Breqwatr's UI and background agent,
+# but are not strictly required by OpenStack.
+
+- name: "Create the demo project"
+  os_project:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    name: "{{ demo_project }}"
+    description: Ansible-created demo project. Safe to delete.
+    domain_id: default
+    enabled: True
+
+# -1 is used to indicate unlimited. RAM is in MB.
+- name: "Set a quota on demo project"
+  os_quota:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ demo_project }}"
+    cores: 4
+    gigabytes: 100
+    instances: 2
+    volumes: -1
+    snapshots: -1
+    ram: 8192
+
+# update_password: on_create doesn't update password if the user exists
+# update_password: always will reset the password every time
+- name: "Create the demo user in keystone"
+  os_user:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    name: "{{ demo_user_name }}"
+    password: "{{ demo_user_password }}"
+    update_password: always
+    email: demouser@example.com
+    domain: default
+    default_project: "{{ demo_project }}"
+
+- name: "Add demo user to demo project as _member_"
+  os_user_role:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    user: "{{ demo_user_name }}"
+    role: "{{ item }}"
+    project: "{{ demo_project }}"
+  with_items:
+    - "_member_"
+    - "admin"

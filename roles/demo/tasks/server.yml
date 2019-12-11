@@ -1,0 +1,38 @@
+---
+# Note that in this file, auth uses "demo_user_auth" to scope to the user
+# created earlier
+
+# You won't be able to access many Linux images without an SSH keypair injected
+# into the image's authorized keys file. OpenStack manages keypairs and does
+# this automatically.
+#
+# Breqwatr's UI expects the keypair to be named "arcus".
+#
+- name: "Define SSH keypair"
+  os_keypair:
+    auth: "{{ demo_user_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    name: "{{ ssh_keypair_name }}"
+    public_key: "{{ ssh_public_key }}"
+
+- name: "Create a server"
+  os_server:
+    state: present
+    auth: "{{ demo_user_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ server_name }}"
+    image: "{{ demo_image_name }}"
+    key_name: "{{ ssh_keypair_name }}"
+    flavor: "{{ demo_flavor }}"
+    nics:
+      - net-name: "{{ vxlan_network_name }}"
+
+- name: "Assign floating IP"
+  os_floating_ip:
+    auth: "{{ demo_user_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    reuse: yes
+    server: "{{ server_name }}"
+    network: "{{ vlan_network_name }}"

@@ -1,0 +1,76 @@
+---
+- name: "Deploy private VLAN network"
+  os_network:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    name: "{{ vlan_network_name }}"
+    external: true
+    provider_segmentation_id: "{{ vlan_id }}"
+    provider_network_type: "vlan"
+    provider_physical_network: physnet1
+    shared: no
+    project: "{{ demo_project }}"
+
+# Note the auth: scope here is to the user, it's their network (demo_user_auth)
+- name: "Deploy private VXLAN overlay network"
+  os_network:
+    auth: "{{ demo_user_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    name: "{{ vxlan_network_name }}"
+    external: false
+    provider_network_type: "vxlan"
+    shared: no
+    project: "{{ demo_project }}"
+
+- name: "Create subnet for vlan"
+  os_subnet:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    network_name: "{{ vlan_network_name }}"
+    name: "{{ vlan_subnet_name }}"
+    cidr: "{{ vlan_cidr }}"
+    allocation_pool_start: "{{ vlan_allocation_pool_start }}"
+    allocation_pool_end: "{{ vlan_allocation_pool_end }}"
+    dns_nameservers:
+       - 1.1.1.1
+       - 8.8.8.8
+    host_routes:
+       - destination: 0.0.0.0/0
+         nexthop: "{{ vlan_upstream_router_ip }}"
+
+# Again, note the demo_user_auth auth scope
+- name: "Create subnet for vxlan"
+  os_subnet:
+    auth: "{{ demo_user_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    network_name: "{{ vxlan_network_name }}"
+    name: "{{ vxlan_subnet_name }}"
+    cidr: "{{ vxlan_cidr }}"
+    dns_nameservers:
+       - 1.1.1.1
+       - 8.8.8.8
+    host_routes:
+       - destination: 0.0.0.0/0
+         nexthop: "{{ router_ip }}"
+
+
+# For the interfaces: section, you can just pass the subnet name instead of
+# the dictionary shown below, and it will inherit that subnet's gateway. The
+# approach shown here is more explicit and can also use other IPs as needed.
+- name: "Create router from overlay to external network"
+  os_router:
+    auth: "{{ demo_user_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    state: present
+    name: "{{ router_name }}"
+    network: "{{ vlan_network_name }}"
+    external_fixed_ips:
+      - subnet: "{{ vlan_subnet_name }}"
+    interfaces:
+      - net: "{{ vxlan_network_name }}"
+        subnet: "{{ vxlan_subnet_name }}"
+        portip: "{{ router_ip }}"

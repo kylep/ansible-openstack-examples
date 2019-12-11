@@ -1,0 +1,19 @@
+---
+
+# the `servers` tag here is used because this module can be slow. You can pass
+# `--skip-tags servers` to ansible-playbook to skip it.
+
+- name: "Get servers data"
+  os_server_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    server: "{{ server_name_or_id }}"
+  register: servers
+  tags:
+    - servers
+
+- name: "show servers info"
+  debug:
+    var: servers
+  tags:
+    - servers

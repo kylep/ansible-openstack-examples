@@ -1,0 +1,28 @@
+---
+is_https_cert_valid: no
+files_directory: /var/ansible-openstack
+demo_image_name: DemoCirros
+demo_user_name: DemoUser
+demo_user_password: Breqwatr2019
+demo_project: DemoProject
+demo_user_auth:
+  auth_url: "{{ openstack_auth['auth_url'] }}"
+  username: "{{ demo_user_name }}"
+  password: "{{ demo_user_password }}"
+  project_name: "{{ demo_project }}"
+demo_flavor: DemoFlavor
+vlan_id: 1212
+vlan_network_name: DemoVLAN-net
+vlan_subnet_name: DemoVLAN-subnet
+vlan_cidr: 192.168.122.0/24
+vlan_allocation_pool_start: 192.168.122.20
+vlan_allocation_pool_end: 192.168.122.200
+vlan_upstream_router_ip: 192.168.122.1
+vxlan_network_name: DemoOverlay-net
+vxlan_subnet_name: DemoOverlay-subnet
+vxlan_cidr: 192.168.1.0/24
+router_name: DemoOverlay-router
+router_ip: 192.168.1.1
+ssh_keypair_name: arcus
+ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxY4AHy7RxGwDO3v+vOTyPcADgdbNrltk4/uruoPuGWTs5O+p0tJxsXlmGyUy8MW56WZr7Vg/A/k860G5EA1oXWyjQPI8la4r5JOHa2WlLVr2Y1R9Fs4uZE6HxEqNeU5KnMm4E2BoqAc+26fEMB6aRRpVqgQU3qHoe6QL7xQ8QmH6xwoovJwKBvks84Q36SkseZk8GmAF8BmyqEEL9/SoMIveZfEV4fPaWuWNpSie8MJ/1HXneyGhkiyLl4P5iFb+NvhIWvtz3ROzg3yxPNlHSDcDgxdiVaaAjQjMeNBYUiImWWuQjz1Slw/3DyJvrb4xRuXd5YZljuSm/RxG49kMj vagrant@dev-env
+server_name: DemoServer

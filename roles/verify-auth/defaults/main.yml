@@ -1,0 +1,5 @@
+openstack_auth:
+    auth_url: https://CHANGE_THIS:5000
+    username: CHANGE_THIS
+    password: CHANGE_THIS
+    project_name: CHANGE_THIS

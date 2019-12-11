@@ -1,0 +1,6 @@
+---
+
+- name: "show OpenStack auth variable"
+  debug:
+    var: openstack_auth
+
