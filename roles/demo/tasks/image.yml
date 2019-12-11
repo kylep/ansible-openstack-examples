@@ -1,0 +1,50 @@
+---
+
+- name: "Create /var/ansible-openstack"
+  file:
+    path: "{{ files_directory }}"
+    state: directory
+    mode: '0755'
+
+- name: "Download cirros image"
+  get_url:
+    url: http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
+    dest: "{{ files_directory }}/cirros.img"
+
+- name: "Install qemu-utils for qemu-img"
+  apt:
+    name: qemu-utils
+
+# This command can convert between various image types, including vmdk
+- name: "Create cirros raw file"
+  shell:
+    cmd: >
+      qemu-img convert -f qcow2 -O raw
+      {{ files_directory }}/cirros.img {{ files_directory }}/cirros.raw
+    creates: /var/ansible-openstack/cirros.raw
+
+# Some of the properties are only required on Breqwatr clouds to support UI
+# features such as image icon selection in the provisioning screen.
+#
+# Note: min_ram is in MB. min_disk is in GB.
+#
+# Note: auth is using demo_user_auth because is_public is no. This makes a
+# private image. You need andmin scope set is_public:yes.
+#
+- name: "Upload the Cirros image, name it DemoCirros"
+  os_image:
+    auth: "{{ demo_user_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ demo_image_name }}"
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: "{{ files_directory }}/cirros.raw"
+    min_disk: 1
+    min_ram: 256
+    is_public: no
+    properties:
+      os_distro: linux-server
+      ssh_required: false
+      cost: 0
+      architecture: "x86_64"

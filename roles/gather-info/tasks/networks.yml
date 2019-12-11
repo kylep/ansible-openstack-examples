@@ -1,0 +1,24 @@
+---
+# If name is not empty, only one network is selected
+- name: "Get network details"
+  os_networks_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ network_name_or_id }}"
+  register: networks
+
+- name: "Show networks"
+  debug:
+    var: networks
+
+- name: "Get subnet details"
+  os_subnets_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ subnet_name_or_id }}"
+  register: subnets
+
+- name: "Show subnets"
+  debug:
+    var: subnets
+

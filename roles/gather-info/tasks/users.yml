@@ -1,0 +1,12 @@
+---
+
+- name: "Get users details"
+  os_user_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ user_name_or_id }}"
+  register: users
+
+- name: "Show users"
+  debug:
+    var: users

@@ -1,0 +1,12 @@
+---
+- name: "Get image details"
+  os_image_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    image: "{{ image_name_or_id }}"
+  register: images
+
+- name: "show images info"
+  debug:
+    var: images
+

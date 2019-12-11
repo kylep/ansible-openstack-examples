@@ -1,0 +1,23 @@
+---
+
+# Fail in an obvious waywhen the auth settings aren't configured
+
+- name: "auth_url not set"
+  fail:
+    msg: "openstack_auth[auth_url] neeeds to be set to the Keystone API endpoint"
+  when: openstack_auth['auth_url'] == "https://CHANGE_THIS:5000"
+
+- name: "username not set"
+  fail:
+    msg: "openstack_auth[username] neeeds to be set"
+  when: openstack_auth['username'] == "CHANGE_THIS"
+
+- name: "password  not set"
+  fail:
+    msg: "openstack_auth[password] neeeds to be set"
+  when: openstack_auth['password'] == "CHANGE_THIS"
+
+- name: "project not set"
+  fail:
+    msg: "openstack_auth[project_name] neeeds to be set"
+  when: openstack_auth['project_name'] == "CHANGE_THIS"

@@ -1,0 +1,12 @@
+---
+# If name is not empty, only one project is selected
+- name: "Get project details"
+  os_project_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ project_name_or_id }}"
+  register: projects
+
+- name: "Show projects"
+  debug:
+    var: projects

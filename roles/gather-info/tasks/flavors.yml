@@ -1,0 +1,13 @@
+---
+# when name: is empty, all flavors are returned
+- name: "Get flavors details"
+  os_flavor_info:
+    auth: "{{ openstack_auth }}"
+    verify: "{{ is_https_cert_valid }}"
+    name: "{{ flavor_name_or_id }}"
+  register: flavors
+
+- name: "show flavors info"
+  debug:
+    var: flavors
+
